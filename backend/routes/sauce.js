@@ -1,16 +1,27 @@
-const express = require("express");
-const router = express.Router()
-const multer= require ('../middleware/multer-config')
-const path = require ('path')
+// Importations
+const express = require('express');
 
-const sauceCtrl = require('../controllers/sauce')
+// Importation du controllers/user.js
+const sauceCtrl = require('../controllers/sauce');
 
-router.get('/', sauceCtrl.getAllSauces)
-// router.get("/:id", sauceCtrl.XXX)
-router.post("/", multer, sauceCtrl.createSauce)
-// router.put("/:id", sauceCtrl.XXX)
-// router.delete("/:id", sauceCtrl.XXX)
+// Importation du middleware d'authentification
+const auth = require('../middleware/auth');
 
+// Importation du middleware multer pour la gestion des images
+const multer = require('../middleware/multer-config');
 
 
-module.exports = router
+// La fonction Router()
+const router = express.Router();
+
+// Les routes
+router.get("/",auth, sauceCtrl.getAllSauces);
+router.post("/", auth, multer, sauceCtrl.createSauce);
+router.put("/:id", auth, multer, sauceCtrl.modifySauce);
+router.get("/:id", auth, sauceCtrl.getOneSauce);
+router.delete("/:id", auth, sauceCtrl.deleteSauce);
+router.post("/:id/like", auth, sauceCtrl.noteSauce);
+
+
+// Exportation du module
+module.exports = router;

@@ -1,18 +1,27 @@
+// Importations
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
 
+// Exportation de la fonction du middleware
 module.exports = (req, res, next) => {
-  try {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-    const userId = decodedToken.userId;
-    if (req.body.userId && req.body.userId !== userId) {
-      throw 'Invalid user ID';
-    } else {
-      next();
+    try {
+      // récuperation du token dans le header
+      const token = req.headers.authorization.split(" ")[1];
+      // comparaison du userId de la demande avec celui extrait du token 
+      const decodedToken = jwt.verify(token, `${process.env.JWT_KEY_TOKEN}`); 
+      const userId = decodedToken.userId;
+      if (req.body.userId && req.body.userId !== userId) {
+        throw "utilisateur non valide";
+      } else {
+        next();
+      }
+    // S'il y a des erreurs dans le try on les récupères ici
+    } catch(error) {
+      res
+        .status(401)
+        .json({
+          message: "vous n\' êtes pas autorisé à accéder à cette page",
+          data: error,
+        });
     }
-  } catch {
-    res.status(401).json({
-      error: new Error('Invalid request!')
-    });
-  }
-};
+  };

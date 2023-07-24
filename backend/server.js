@@ -1,12 +1,15 @@
+// Importation du package HTTP de Node
 const http = require('http');
+
+// Importer l'application app.js
 const app = require('./app');
 
-// Pour résoudre une erreur inconnue lors de la création d'un user depuis le front.
-const cors = require('cors');
-app.use(cors()) 
-// ------------------------------------------------------------------------------
+// Importer le package pour utiliser les variables d'environnement
+const dotenv = require('dotenv');
 
+const result = dotenv.config();
 
+// Sur quel port va tourner l'application,la fonction NormalizePort() va renvoyer un port valide
 const normalizePort = val => {
   const port = parseInt(val, 10);
 
@@ -18,9 +21,10 @@ const normalizePort = val => {
   }
   return false;
 };
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3000'); // Par défaut en développement, sauf si pas dispo => process.env.PORT
 app.set('port', port);
 
+// Error handler recherche les différentes erreurs et les gère de manière appropriée
 const errorHandler = error => {
   if (error.syscall !== 'listen') {
     throw error;
@@ -41,6 +45,8 @@ const errorHandler = error => {
   }
 };
 
+// createServer() prends en argument la fonction appelé à chaque requête reçu par le serveur
+// ici les fonctions seront dans app
 const server = http.createServer(app);
 
 server.on('error', errorHandler);
@@ -50,4 +56,5 @@ server.on('listening', () => {
   console.log('Listening on ' + bind);
 });
 
+// Le serveur écoute les requêtes sur le port
 server.listen(port);

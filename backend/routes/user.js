@@ -1,9 +1,22 @@
-const express = require("express");
-const router = express.Router()
+// Importation
+const express = require('express');
 
-const userCtrl = require("../controllers/user");
+// Importation du middleware/password et check-email
+const password = require('../middleware/check-password');
 
-router.post("/signup", userCtrl.signup);
-router.post("/login", userCtrl.login);
+const checkemail = require('../middleware/check-email');
 
+// Importation du controllers/user.js
+const userCtrl = require('../controllers/user');
+
+// La fonction Router()
+const router = express.Router();
+
+// La route (endpoint) signup 
+router.post('/signup', checkemail, password, userCtrl.signup);
+
+// La route (endpoint) login 
+router.post('/login', userCtrl.login);
+
+// Exportation du module
 module.exports = router;
